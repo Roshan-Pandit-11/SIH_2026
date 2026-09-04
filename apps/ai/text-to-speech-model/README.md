@@ -17,3 +17,7 @@
 - example (const activeKaggleUrl = "https://scorch-citric-denial.ngrok-free.dev/v1/synthesize";)
 
 
+## Audio Samples
+- [[Video Label]](sample_audio/sample-audio-english.mp4)
+
+  <video src="sample_audio/sample-audio-english.mp4" controls width="100%"></video>
