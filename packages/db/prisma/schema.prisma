@@ -37,7 +37,7 @@ model User {
 
 model EmailOtp {
   id      String  @id @default(uuid())
-  email   String
+  email   String @unique
   otpHash String
   expiresAt DateTime
   attempts Int @default(0)

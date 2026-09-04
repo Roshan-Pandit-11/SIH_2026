@@ -64,17 +64,59 @@ app.post("/auth/send_otp", async (req, res) => {
 
     const otp = Math.floor(Math.random()*900000).toString() ;
 
-    const storeotp = await
-    const response = await sendOTP(email, otp) ;
-    if (response.message){
-        return res.json({
-            success : true ,
-            msg : "OTP send successfully"
-        })
-    }else{
+    const storeOtp = await prisma.emailOtp.upsert({
+        where : {
+            email : checkEmail.email
+        },
+        update : {
+            otpHash : otp
+        },
+        create : {
+            email : checkEmail.email,
+            expiresAt : new Date(Date.now() + 5 * 60 * 10000),
+            otpHash : otp
+        }
+    })
+
+    if (storeOtp != null && storeOtp){
+        const response = await sendOTP(email, otp) ;
+        if (response.message){
+            return res.json({
+                success : true ,
+                msg : "OTP send successfully"
+            })
+            }else{
+            return res.json({
+                success : false,
+                msg : response.error 
+            })
+        }
+    }
+})
+
+app.post("/auth/verify_otp", async (req , res) => {
+    const {email, otp} = req.body ;
+    const findEmail = await prisma.emailOtp.findFirst({
+        where : {
+            email : email
+        }
+    }) ;
+    if (findEmail == null || !findEmail){
         return res.json({
             success : false,
-            msg : response.error 
+            msg : "Email Not Found"
+        })
+    }
+
+    if (otp == findEmail.otpHash){
+        return res.json({
+            success : true,
+            msg : "OTP Verified"
+        })
+    }else {
+        return res.json({
+            success : false,
+            msg : "Invalid OTP"
         })
     }
 })
