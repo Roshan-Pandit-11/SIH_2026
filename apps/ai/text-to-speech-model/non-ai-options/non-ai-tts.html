@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Browser Text-to-Speech</title>
+</head>
+<body>
+
+    <h2>Browser Text-to-Speech (Non-AI)</h2>
+    <textarea id="textInput" rows="4" cols="50">Bonjour, comment ça va?</textarea>
+    <br><br>
+    
+    <label for="langSelect">Choose Language: </label>
+    <select id="langSelect">
+        <option value="en-US">English (US)</option>
+        <option value="fr-FR" selected>French (France)</option>
+        <option value="es-ES">Spanish (Spain)</option>
+    </select>
+    <br><br>
+
+    <button onclick="speakText()">Speak Out Loud</button>
+
+    <script>
+        function speakText() {
+            // 1. Get the text and language from the page
+            const text = document.getElementById('textInput').value;
+            const selectedLang = document.getElementById('langSelect').value;
+
+            // 2. Create a new Speech synthesis request
+            const utterance = new SpeechSynthesisUtterance(text);
+            
+            // 3. Set the language code
+            utterance.lang = selectedLang;
+
+            // 4. Tell the browser to speak it
+            window.speechSynthesis.speak(utterance);
+        }
+    </script>
+
+</body>
+</html>
