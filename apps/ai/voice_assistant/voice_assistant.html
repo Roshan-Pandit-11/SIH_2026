@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+    <h3>Microphone Test</h3>
+    <button onclick="start()">1. Talk</button>
+    <button onclick="stop()">2. Stop</button>
+    
+    <p>Status: <span id="status">Idle</span></p>
+    <p>You said: <span id="userText">...</span></p>
+    <p>AI response: <span id="aiText">...</span></p>
+
+    <script>
+        let rec;
+
+        function start() {
+            document.getElementById('status').innerText = "Listening...";
+            
+            // Raw setup for Chrome/Edge
+            rec = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            rec.lang = 'en-US';
+
+            rec.onresult = function(event) {
+                let txt = event.results[0][0].transcript;
+                document.getElementById('userText').innerText = txt;
+                
+                // Jump straight to the backend request
+                askBackend(txt);
+            };
+
+            rec.start();
+        }
+
+        function stop() {
+            if (rec) {
+                rec.abort(); // Hard kill microphone instantly to prevent loop
+                document.getElementById('status').innerText = "Stopped manually.";
+            }
+        }
+
+        function askBackend(promptText) {
+            document.getElementById('status').innerText = "Asking backend...";
+            
+            fetch("http://127.0.0.1:8001/query", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ question: promptText })
+            })
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('aiText').innerText = data.answer;
+                document.getElementById('status').innerText = "Speaking...";
+                
+                // Raw text to speech output
+                let speech = new SpeechSynthesisUtterance(data.answer);
+                speech.onend = () => document.getElementById('status').innerText = "Ready.";
+                window.speechSynthesis.speak(speech);
+            })
+            .catch(err => {
+                document.getElementById('status').innerText = "Server Error!";
+                console.error(err);
+            });
+        }
+    </script>
+
+</body>
+</html>

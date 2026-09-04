@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Open AI Voice Agent Widget</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2); 
+        }
+        .chat-widget { 
+            background: white; 
+            padding: 35px; 
+            border-radius: 16px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
+            text-align: center; 
+            width: 100%;
+            max-width: 420px;
+        }
+        h3 { color: #2d3748; margin-bottom: 6px; font-size: 22px; font-weight: 700; }
+        p { color: #718096; font-size: 14px; margin-bottom: 25px; }
+        
+        textarea { 
+            width: 100%; 
+            height: 110px; 
+            margin-bottom: 18px; 
+            border-radius: 10px; 
+            padding: 14px; 
+            border: 1px solid #e2e8f0; 
+            font-size: 16px; 
+            resize: none;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        textarea:focus { 
+            border-color: #4a90e2; 
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.15);
+        }
+        
+        .selectors { 
+            display: flex; 
+            gap: 12px; 
+            margin-bottom: 22px; 
+        }
+        select {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            font-size: 14px;
+            background-color: #fff;
+            outline: none;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+        select:focus { border-color: #4a90e2; }
+        
+        button { 
+            background: #4a90e2; 
+            color: white; 
+            border: none; 
+            width: 100%;
+            padding: 15px; 
+            border-radius: 10px; 
+            cursor: pointer; 
+            font-size: 16px; 
+            font-weight: 600; 
+            box-shadow: 0 4px 12px rgba(74, 144, 226, 0.25);
+            transition: background 0.2s, transform 0.1s;
+        }
+        button:hover { background: #357abd; }
+        button:active { transform: scale(0.98); }
+        button:disabled { 
+            background: #cbd5e1; 
+            color: #94a3b8;
+            cursor: not-allowed; 
+            box-shadow: none;
+            transform: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="chat-widget">
+    <h3>Open AI Voice Agent</h3>
+    <p>Live Streaming Voice Integration (Token-Free)</p>
+    
+    <textarea id="textInput" placeholder="Type your text here (English text, हिंदी स्क्रिप्ट, Texto en español)..."></textarea>
+    
+    <div class="selectors">
+        <select id="langSelect">
+            <option value="en">English (en)</option>
+            <option value="hindi">Hindi (hi)</option>
+            <option value="es">Spanish (es)</option>
+            <option value="arabic">Arabic (ar)</option>
+        </select>
+        
+        <select id="genderSelect">
+            <option value="female">Female 👩</option>
+            <option value="male">Male 👨</option>
+        </select>
+    </div>
+
+    <button id="speakBtn" onclick="generateVoice()">Speak Phrase 🔊</button>
+</div>
+
+<script>
+async function generateVoice() {
+    const textInput = document.getElementById("textInput").value.trim();
+    const langSelect = document.getElementById("langSelect").value;
+    const genderSelect = document.getElementById("genderSelect").value;
+    const button = document.getElementById("speakBtn");
+
+    if (!textInput) {
+        alert("Please write a text phrase first!");
+        return;
+    }
+
+    // Toggle button state to block spam clicking during AI generation
+    button.disabled = true;
+    button.innerText = "Synthesizing Speech Loop...";
+
+    // 🔗 Paste your active ngrok URL right here (make sure /v1/synthesize is kept at the end)
+    const activeKaggleUrl = "https://scorch-citric-denial.ngrok-free.dev/v1/synthesize"; 
+
+    try {
+        // Run standard fetch request over the open public route mapping
+        const response = await fetch(activeKaggleUrl, {
+            method: "POST",
+            headers: { 
+                "Content-Type": "application/json" 
+                // 🔓 Secure header checks have been removed. Any browser client can bypass.
+            },
+            body: JSON.stringify({
+                text: textInput,
+                language: langSelect,
+                gender: genderSelect
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`Server returned status code: ${response.status}`);
+        }
+
+        // Catch the streaming binary chunk buffer array data response
+        const audioBlob = await response.blob();
+        const audioUrl = URL.createObjectURL(audioBlob);
+        
+        // Feed file data straight to the browser media engine for instant playback
+        const audio = new Audio(audioUrl);
+        audio.play();
+
+    } catch (error) {
+        console.error("Transmission failed:", error);
+        alert(`Connection Failed: ${error.message}\n\nDouble check that your Kaggle cell thread is actively running.`);
+    } finally {
+        // Restore button state
+        button.disabled = false;
+        button.innerText = "Speak Phrase 🔊";
+    }
+}
+</script>
+
+</body>
+</html>
