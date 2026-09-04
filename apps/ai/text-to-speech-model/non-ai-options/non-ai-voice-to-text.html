@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Voice to Text</title>
+</head>
+<body>
+
+    <h2>Voice to Text Converter (Non-AI Browser Standard)</h2>
+    <button onclick="startConverting()">Start Listening</button>
+    <p id="status" style="color: gray;">Click the button and start speaking...</p>
+    
+    <div id="result" style="border: 1px solid #ccc; padding: 10px; width: 400px; min-height: 50px;"></div>
+
+    <script>
+        function startConverting() {
+            const status = document.getElementById('status');
+            const resultDiv = document.getElementById('result');
+
+            // Check browser compatibility
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                alert("Your browser does not support speech recognition.");
+                return;
+            }
+
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'en-US'; // Change to 'hi-IN' for Hindi, 'ta-IN' for Tamil, etc.
+            recognition.interimResults = false; // Only show final result
+
+            status.innerText = "Listening... Speak into your microphone.";
+
+            recognition.onresult = function(event) {
+                const textResult = event.results[0][0].transcript;
+                resultDiv.innerText = textResult;
+                status.innerText = "Finished listening.";
+            };
+
+            recognition.onerror = function(event) {
+                status.innerText = "Error occurred: " + event.error;
+            };
+
+            recognition.start();
+        }
+    </script>
+
+</body>
+</html>
