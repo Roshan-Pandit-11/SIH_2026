@@ -18,6 +18,9 @@
 
 
 ## Audio Samples
-- [[Video Label]](sample_audio/sample-audio-english.mp4)
-
-  <video src="sample_audio/sample-audio-english.mp4" controls width="100%"></video>
+<table>
+  <tr>
+    <td width="300"><video src="https://github.com/user-attachments/assets/68579b6c-fa34-41ce-82b6-a29ea4080057"></video></td>
+    <td width="300"><video src="https://github.com/user-attachments/assets/f9defc03-de92-4633-a472-32fb3af3f418"></video></td>
+  </tr>
+</table>
