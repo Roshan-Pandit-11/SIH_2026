@@ -1,3 +1,11 @@
+# How to see the frontend
+
+1. Install **Expo Go** from the Play Store
+2. Make sure your phone and PC are on the same WiFi
+3. From the repo root: `bun install`
+4. `cd apps/mobile && bun run start`
+5. Scan the QR code with Expo Go   
+
 # Welcome to your Expo app 👋
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
