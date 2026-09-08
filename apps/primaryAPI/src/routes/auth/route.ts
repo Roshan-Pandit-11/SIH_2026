@@ -1,9 +1,9 @@
 import express from "express" ;
-import {prisma} from "./lib/prisma.js" ;
-import {success, z} from "zod" ;
+import {prisma} from "../../lib/prisma.js" ;
+import {z} from "zod" ;
 import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt" ;
-import { sendOTP } from "./lib/email/sendOtp.js";
+import { sendOTP } from "../../lib/email/sendOtp.js" ;
 
 const authRoutes = express.Router() ;
 
